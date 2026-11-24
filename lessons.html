@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 学习导航</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f7f8f3;color:#17281e;font:16px/1.6 "Microsoft YaHei",system-ui,sans-serif}a{color:inherit}header{border-bottom:1px solid #dce4d9}nav,main,footer{width:min(1080px,calc(100% - 40px));margin:auto}nav{min-height:68px;display:flex;align-items:center;justify-content:space-between;gap:16px}nav a{text-decoration:none;font-size:14px}.brand{font-weight:800;font-size:18px}.brand span{display:inline-grid;place-items:center;background:#224b36;color:#fff;width:34px;height:34px;border-radius:9px;margin-right:9px}.hero{margin:32px 0 44px;padding:clamp(28px,6vw,72px);border-radius:26px;background:radial-gradient(ellipse at 90% 0%,#3c7654,transparent 62%),#173b2a;color:#fff}h1{font-size:clamp(38px,7vw,70px);line-height:1.12;margin:0 0 16px;letter-spacing:-.04em}.hero p{color:#e0ebdf;margin:0 0 26px}.cta{display:inline-block;background:#d9faac;color:#1d3929;border-radius:9px;padding:10px 18px;font-weight:700;text-decoration:none}h2{margin:0 0 14px;font-size:26px}.filters{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 20px}button{font:inherit;font-size:14px;cursor:pointer;border:1px solid #d8e1d4;background:#fff;color:inherit;padding:6px 14px;border-radius:99px}button[aria-pressed=true]{background:#224b36;color:white;border-color:#224b36}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,285px),1fr));gap:14px}.card{background:white;border:1px solid #dce4d9;border-radius:16px;padding:21px;display:flex;flex-direction:column;gap:8px}.card h3,.card p{margin:0}.category{font-size:13px;font-weight:700;color:#366444}.card p,.status,footer{font-size:14px;color:#516259}.card a,.status{margin-top:auto;padding-top:8px}.card a{font-weight:700}footer{margin:34px auto 0;padding:20px 0;border-top:1px solid #dce4d9}:focus-visible{outline:3px solid #61973c;outline-offset:3px}
+[hidden]{display:none!important}.login-panel{width:min(420px,calc(100% - 40px));margin:clamp(40px,15vh,140px) auto;padding:28px;background:white;border:1px solid #dce4d9;border-radius:16px}.login-panel h1{font-size:28px;letter-spacing:0}.login-panel label{display:block;margin-bottom:6px}.login-panel input{width:100%;font:inherit;border:1px solid #849788;border-radius:8px;padding:9px 12px}.login-panel button{margin-top:14px;background:#224b36;color:white;border-radius:8px;padding:8px 20px}.login-error{color:#9c2828}
+</style>
+</head>
+<body><div id="learning-page">
+<header><nav aria-label="主导航"><a class="brand" href="#"><span>AI</span>AI 学习导航</a><a href="#resources">学习资源</a></nav></header>
+<main>
+<section class="hero" aria-labelledby="title"><h1 id="title">AI 学习导航</h1><p>从零基础入门到动手实战，按分类找到教程、工具和学习资料。</p><a class="cta" href="#resources">浏览学习资源 ↓</a></section>
+<section id="resources" aria-labelledby="resource-title"><h2 id="resource-title">学习资源</h2><div class="filters" id="filters" role="group" aria-label="资源分类"></div><div class="grid" id="cards" aria-live="polite"></div></section>
+</main>
+<footer>当前为框架预览，课程内容和链接待补充。</footer>
+</div>
+<script>const resources = [
+  {category: "零基础入门", title: "第一次学 AI，从这里开始", description: "预留入门视频和学习顺序。", url: ""},
+  {category: "工具与安装", title: "AI 工具下载与安装", description: "选择软件，前往官方下载页面。", links: [{label: "Codex 下载官网", url: "https://openai.com/zh-Hans-CN/codex/"}, {label: "CC Switch 下载官网", url: "https://ccswitch.io/zh/"}, {label: "WorkBuddy 下载官网", url: "https://www.workbuddy.cn/"}, {label: "豆包 下载官网", url: "https://www.doubao.com/download/desktop"}]},
+  {category: "实战案例", title: "跟着案例动手做", description: "预留操作步骤、示例和练习素材。", url: ""},
+];
+const filters = document.querySelector("#filters");
+const cards = document.querySelector("#cards");
+const categories = ["全部", ...new Set(resources.map(resource => resource.category))];
+
+function renderResources(category) {
+  const visible = resources.filter(resource => category === "全部" || resource.category === category);
+  cards.replaceChildren(...visible.map(resource => {
+    const card = document.createElement("article");
+    card.className = "card";
+    const label = document.createElement("span");
+    label.className = "category";
+    label.textContent = resource.category;
+    const title = document.createElement("h3");
+    title.textContent = resource.title;
+    const description = document.createElement("p");
+    description.textContent = resource.description;
+    card.append(label, title, description);
+    if (resource.links?.length) {
+      for (const link of resource.links) {
+        const action = document.createElement("a");
+        action.href = link.url;
+        action.textContent = link.label + " ↗";
+        action.target = "_blank";
+        action.rel = "noopener noreferrer";
+        card.append(action);
+}
+    } else {
+      const status = document.createElement("span");
+      status.className = "status";
+      status.textContent = "链接待添加";
+      card.append(status);
+    }
+    return card;
+  }));
+}
+
+for (const category of categories) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.textContent = category;
+  button.setAttribute("aria-pressed", String(category === "全部"));
+  button.addEventListener("click", () => {
+    for (const filter of filters.children) {
+      filter.setAttribute("aria-pressed", String(filter === button));
+    }
+    renderResources(category);
+  });
+  filters.append(button);
+}
+renderResources("全部");
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
